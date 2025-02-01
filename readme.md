@@ -24,7 +24,7 @@ Ensure you have the following installed:
 
 ### 1️⃣ Clone the repository
 ```sh
-git clone https://github.com/your-repo/django-docker.git
+git clone https://github.com/ArtA110/Dongi.git
 cd django-docker
 ```
 
