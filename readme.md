@@ -25,7 +25,7 @@ Ensure you have the following installed:
 ### 1️⃣ Clone the repository
 ```sh
 git clone https://github.com/ArtA110/Dongi.git
-cd django-docker
+cd Dongi
 ```
 
 ### 2️⃣ Build and run the project
@@ -63,4 +63,7 @@ make createsuperuser  # Create Django superuser
 
 ---
 
-
+## 🔨 Project Architecture
+### ERD
+You can see project **ERD** below:  
+[![DongiERD.png](https://i.postimg.cc/jq3xPYCL/Dongi.png)](https://dbdiagram.io/d/Dongi-679cf9ed263d6cf9a0a8af96)
