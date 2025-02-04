@@ -18,7 +18,7 @@ class Expense(BaseModel):
         ("custom", "Custom"),
     ]
     split_type = models.CharField(max_length=20, choices=SPLIT_TYPES, default="equal")
-    split_data = models.JSONField()
+    split_data = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return f"Expense {self.id} - {self.amount}"
@@ -40,7 +40,7 @@ class Payment(BaseModel):
     payee = models.ForeignKey("User", on_delete=models.CASCADE, related_name="payments_received")
     expense = models.ForeignKey("Expense", on_delete=models.CASCADE, null=True, blank=True)
     amount = models.FloatField(default=0)
-    paid_at = models.DateTimeField(auto_now=True)
+    paid_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
     receipt = models.FileField(upload_to="receipts/", blank=True, null=True)
 
