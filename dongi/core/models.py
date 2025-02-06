@@ -1,10 +1,10 @@
-import uuid
+from django_ulid.models import ULIDField
 from django.db import models
 from django.utils import timezone
 
 
 class BaseModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = ULIDField(primary_key=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
