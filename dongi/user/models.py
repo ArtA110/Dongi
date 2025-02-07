@@ -1,15 +1,16 @@
-from django.db import models
+from core.models import BaseModel
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from .managers import UserManager
+from django.db import models
 from django_ulid.models import default as default_ulid
-from django_ulid.models import ULIDField
+
+from .managers import UserManager
+
 
 def new_ulid():
     return str(default_ulid())
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    id = ULIDField(default=new_ulid, primary_key=True, editable=False)
+class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=150, null=True, blank=True)
     last_name = models.CharField(max_length=150, null=True, blank=True)
@@ -26,3 +27,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.email
+
+
+class Group(BaseModel):
+    name = models.CharField(max_length=255)
+    users = models.ManyToManyField(to=User, related_name="dongi_groups")
