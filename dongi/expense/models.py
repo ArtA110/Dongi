@@ -24,7 +24,7 @@ class Expense(BaseModel):
 
 class ExpenseShare(BaseModel):
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE, related_name="shares")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="users")
     amount = models.PositiveIntegerField(default=0)
 
     def __str__(self):
