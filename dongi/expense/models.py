@@ -6,7 +6,6 @@ from dongi.account.models import Group, User
 
 
 class Expense(BaseModel):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     group = models.ForeignKey("Group", on_delete=models.CASCADE)
     amount = models.FloatField(default=0)
     bought_at = models.DateField()
@@ -25,7 +24,6 @@ class Expense(BaseModel):
 
 
 class ExpenseShare(BaseModel):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     expense = models.ForeignKey("Expense", on_delete=models.CASCADE, related_name="shares")
     user = models.ForeignKey("User", on_delete=models.CASCADE)
     amount = models.FloatField(default=0)
@@ -35,7 +33,6 @@ class ExpenseShare(BaseModel):
 
 
 class Payment(BaseModel):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     payer = models.ForeignKey("User", on_delete=models.CASCADE, related_name="payments_made")
     payee = models.ForeignKey("User", on_delete=models.CASCADE, related_name="payments_received")
     expense = models.ForeignKey("Expense", on_delete=models.CASCADE, null=True, blank=True)
