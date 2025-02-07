@@ -1,8 +1,8 @@
 .PHONY: build up down logs shell migrate createsuperuser test lint format
 
 
-DOCKER_COMPOSE = docker-compose
-PYTHON = docker-compose exec backend python
+DOCKER_COMPOSE = docker compose
+PYTHON = docker compose exec backend python
 
 
 build:
