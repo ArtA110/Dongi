@@ -9,6 +9,7 @@ build/
 .venv/
 env/
 venv/
+.env/
 
 *.log
 local_settings.py
