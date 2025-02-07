@@ -5,3 +5,4 @@ typing_extensions==4.12.2
 tzdata==2025.1
 ruff
 psycopg2-binary
+django-ulid
