@@ -1,12 +1,9 @@
 from django.db import models
-from dongi.core.models import BaseModel
-import uuid
-from django.utils import timezone
-from dongi.account.models import Group, User
-
+from core.models import BaseModel
+from user.models import User, Group
 
 class Expense(BaseModel):
-    group = models.ForeignKey("Group", on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
     amount = models.FloatField(default=0)
     bought_at = models.DateField()
     description = models.TextField(blank=True, null=True)
@@ -24,8 +21,8 @@ class Expense(BaseModel):
 
 
 class ExpenseShare(BaseModel):
-    expense = models.ForeignKey("Expense", on_delete=models.CASCADE, related_name="shares")
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    expense = models.ForeignKey(Expense, on_delete=models.CASCADE, related_name="shares")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.FloatField(default=0)
 
     def __str__(self):
@@ -33,9 +30,9 @@ class ExpenseShare(BaseModel):
 
 
 class Payment(BaseModel):
-    payer = models.ForeignKey("User", on_delete=models.CASCADE, related_name="payments_made")
-    payee = models.ForeignKey("User", on_delete=models.CASCADE, related_name="payments_received")
-    expense = models.ForeignKey("Expense", on_delete=models.CASCADE, null=True, blank=True)
+    payer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments_made")
+    payee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments_received")
+    expense = models.ForeignKey(Expense, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.FloatField(default=0)
     paid_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
@@ -43,5 +40,3 @@ class Payment(BaseModel):
 
     def __str__(self):
         return f"{self.payer} paid {self.payee} - {self.amount}"
-
-
