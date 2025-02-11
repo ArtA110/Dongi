@@ -6,3 +6,8 @@ tzdata==2025.1
 ruff
 psycopg2-binary
 django-ulid
+djangorestframework
+markdown       
+django-filter
+djangorestframework-simplejwt
+pillow
