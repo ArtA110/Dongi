@@ -15,10 +15,12 @@ services:
     image: postgres:17
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env.dev
     environment:
-      - POSTGRES_USER=dev
-      - POSTGRES_PASSWORD=devpass
-      - POSTGRES_DB=dongi
+      POSTGRES_USER: ${SQL_USER}
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_DB: ${SQL_DATABASE}
 
 volumes:
   postgres_data:
