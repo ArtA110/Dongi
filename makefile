@@ -1,5 +1,7 @@
-.PHONY: build up down logs shell migrate createsuperuser test lint format
+.PHONY: build up down logs shell migrate createsuperuser test lint format restart reset-db
 
+include .env.dev
+export $(shell sed 's/=.*//' .env.dev)
 
 DOCKER_COMPOSE = docker compose
 PYTHON = docker compose exec backend python
@@ -51,5 +53,5 @@ format:
 
 
 reset-db:
-	$(EXEC) db psql -U dev -d postgres -c "DROP DATABASE IF EXISTS dongi;"
-	$(EXEC) db psql -U dev -d postgres -c "CREATE DATABASE dongi OWNER dev;"
+	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "DROP DATABASE IF EXISTS $(SQL_DATABASE);"
+	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "CREATE DATABASE $(SQL_DATABASE) OWNER $(SQL_USER);"
