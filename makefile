@@ -3,6 +3,7 @@
 
 DOCKER_COMPOSE = docker compose
 PYTHON = docker compose exec backend python
+EXEC = docker compose exec
 
 
 build:
@@ -15,6 +16,10 @@ up:
 
 down:
 	$(DOCKER_COMPOSE) down
+
+
+restart:
+	$(DOCKER_COMPOSE) down && $(DOCKER_COMPOSE) up -d
 
 
 logs:
@@ -43,3 +48,8 @@ lint:
 
 format:
 	$(PYTHON) -m ruff format dongi
+
+
+reset-db:
+	$(EXEC) db psql -U dev -d postgres -c "DROP DATABASE IF EXISTS dongi;"
+	$(EXEC) db psql -U dev -d postgres -c "CREATE DATABASE dongi OWNER dev;"
