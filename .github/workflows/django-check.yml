@@ -26,8 +26,8 @@ jobs:
       
       - name: Build Docker image
         run: |
-          docker-compose build
+          docker compose build
 
       - name: Run Django checks
         run: |
-          docker-compose run --rm backend python manage.py check
+          docker compose run --rm backend python manage.py check
