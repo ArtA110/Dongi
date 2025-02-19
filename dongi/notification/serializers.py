@@ -4,7 +4,7 @@ from user.serializers import UserSerializer
 
 
 class NotificationSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = UserSerializer(context={'limited': True})
 
     class Meta:
         model = Notification
