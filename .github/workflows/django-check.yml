@@ -1,0 +1,33 @@
+name: Django Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.py'
+      - 'Dockerfile'
+      - 'compose.yml'
+      - '.github/workflows/django-check.yml'
+
+jobs:
+  django-check:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Build Docker image
+        run: |
+          docker compose build
+
+      - name: Run Django checks
+        run: |
+          docker compose run --rm backend python dongi/manage.py check
