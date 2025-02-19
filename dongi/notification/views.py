@@ -4,5 +4,5 @@ from .serializers import NotificationSerializer
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.select_related('user')
     serializer_class = NotificationSerializer
