@@ -30,4 +30,4 @@ jobs:
 
       - name: Run Django checks
         run: |
-          docker compose run --rm backend python manage.py check
+          docker compose run --rm backend python dongi/manage.py check
