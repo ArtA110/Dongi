@@ -54,12 +54,14 @@ make createsuperuser  # Create Django superuser
 | `make build`   | Build the Docker containers       |
 | `make up`      | Start the containers              |
 | `make down`    | Stop and remove containers       |
+| `make restart` | restart container              |
 | `make logs`    | View container logs               |
 | `make shell`   | Open a shell inside the container |
 | `make migrate` | Apply database migrations        |
 | `make createsuperuser` | Create a Django superuser |
 | `make format`  | Format code using `ruff`          |
 | `make lint`    | Lint code using `ruff`            |
+| `make reset-db`    | remove databse and create a fresh database            |
 
 ---
 
