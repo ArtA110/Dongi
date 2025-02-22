@@ -1,3 +1,6 @@
 from django.contrib import admin
+from expense.models import Expense, ExpenseShare, Payment
 
-# Register your models here.
+admin.site.register(Expense)
+admin.site.register(ExpenseShare)
+admin.site.register(Payment)

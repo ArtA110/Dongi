@@ -25,10 +25,12 @@ from rest_framework_simplejwt.views import (
 from rest_framework.routers import DefaultRouter
 from notification.urls import router as notification_router
 from user.urls import router as user_router
+from expense.urls import router as expense_router
 
 router = DefaultRouter()
 router.registry.extend(notification_router.registry)  # Merge routes
 router.registry.extend(user_router.registry)
+router.registry.extend(expense_router.registry)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

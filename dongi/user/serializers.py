@@ -25,5 +25,14 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.context.get('limited'):
+            allowed_fields = ['id', 'name', 'users']
+            for field_name in list(self.fields.keys()):
+                if field_name not in allowed_fields:
+                    self.fields.pop(field_name)
     
         
