@@ -10,7 +10,7 @@ class Expense(BaseModel):
     bought_at = models.DateField()
     description = models.TextField(blank=True, null=True)
     split_data = models.JSONField(blank=True, null=True)
-    factor = models.ImageField(upload_to="factors/", blank=True, null=True)
+    factor = models.ImageField(upload_to="dongi/expense/factors/", blank=True, null=True)
 
     def __str__(self):
         return f"Expense {self.id} - {self.amount}"
@@ -32,7 +32,7 @@ class Payment(BaseModel):
     amount = models.PositiveIntegerField(default=0)
     paid_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
-    receipt = models.ImageField(upload_to="receipts/", blank=True, null=True)
+    receipt = models.ImageField(upload_to="dongi/expense/receipts/", blank=True, null=True)
 
     def __str__(self):
         return f"{self.payer} paid {self.payee} - {self.amount}"
