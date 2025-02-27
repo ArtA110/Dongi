@@ -8,7 +8,7 @@ def new_ulid():
     return str(default_ulid()) # Keeping this for migration consistency
 
 class BaseModel(models.Model):
-    id = ULIDField(default=default_ulid ,primary_key=True, editable=False)
+    id = ULIDField(default=new_ulid ,primary_key=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
