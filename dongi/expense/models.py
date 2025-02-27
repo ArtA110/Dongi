@@ -2,7 +2,7 @@ from django.db import models
 from core.models import BaseModel
 from user.models import Group
 from django.contrib.auth import get_user_model
-from .validators.field_validators import JSONSchemaValidator
+from .validators.field_validators import JSONSchemaValidator, validate_split_data
 
 User = get_user_model()
 
@@ -43,6 +43,14 @@ class Expense(BaseModel):
 
     def __str__(self):
         return f"Expense {self.id} - {self.amount}"
+    
+    def clean(self):
+        validate_split_data(self.split_data, self.amount)
+        return super().clean()
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 
 class ExpenseShare(BaseModel):
