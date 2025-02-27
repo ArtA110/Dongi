@@ -2,14 +2,43 @@ from django.db import models
 from core.models import BaseModel
 from user.models import Group
 from django.contrib.auth import get_user_model
+from .validators.field_validators import JSONSchemaValidator
 
 User = get_user_model()
+
+
+SPLIT_DATA_JSON_SCHEMA = {
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "type": "object",
+  "properties": {
+    "users": {
+      "type": "array",
+      "description": "List of users and their respective amounts",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User ID of the user"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount that should be paid by the user"
+          }
+        },
+        "required": ["user_id", "amount"]
+      }
+    }
+  },
+  "required": ["users"]
+}
 class Expense(BaseModel):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=0)
     bought_at = models.DateField()
     description = models.TextField(blank=True, null=True)
-    split_data = models.JSONField(blank=True, null=True)
+    split_data = models.JSONField(validators=[JSONSchemaValidator(limit_value=SPLIT_DATA_JSON_SCHEMA)],
+                                  blank=True, null=True)
     factor = models.ImageField(upload_to="factors/", blank=True, null=True)
 
     def __str__(self):
