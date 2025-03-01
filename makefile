@@ -55,3 +55,9 @@ format:
 reset-db:
 	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "DROP DATABASE IF EXISTS $(SQL_DATABASE);"
 	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "CREATE DATABASE $(SQL_DATABASE) OWNER $(SQL_USER);"
+
+
+loaddata:
+	$(PYTHON) dongi/manage.py loaddata dongi/user/fixtures/user_fixtures.json
+	$(PYTHON) dongi/manage.py loaddata dongi/notification/fixtures/notification_fixtures.json
+	$(PYTHON) dongi/manage.py loaddata dongi/expense/fixtures/expense_fixtures.json
