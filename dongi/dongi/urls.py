@@ -22,15 +22,6 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
-from rest_framework.routers import DefaultRouter
-from notification.urls import router as notification_router
-from user.urls import router as user_router
-from expense.urls import router as expense_router
-
-router = DefaultRouter()
-router.registry.extend(notification_router.registry)  # Merge routes
-router.registry.extend(user_router.registry)
-router.registry.extend(expense_router.registry)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -39,7 +30,9 @@ urlpatterns = [
         "api/v1/",
         include(
             [
-                path("apps/", include(router.urls)),
+                path("apps/", include('expense.urls')),
+                path("apps/", include('notification.urls')),
+                path("apps/", include('user.urls')),
                 path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
                 path(
                     "token/refresh/", TokenRefreshView.as_view(), name="token_refresh"

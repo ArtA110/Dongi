@@ -6,6 +6,7 @@ export $(shell sed 's/=.*//' .env.dev)
 DOCKER_COMPOSE = docker compose
 PYTHON = docker compose exec backend python
 EXEC = docker compose exec
+MANAGE = docker compose exec backend python dongi/manage.py 
 
 
 build:
@@ -29,7 +30,7 @@ logs:
 
 
 shell:
-	$(PYTHON) sh
+	$(MANAGE) shell
 
 
 migrate:
