@@ -1,4 +1,4 @@
-.PHONY: build up down logs shell migrate createsuperuser test lint format restart reset-db
+.PHONY: build up down logs shell migrate createsuperuser test lint format restart reset-db delete_migrations install-req
 
 include .env.dev
 export $(shell sed 's/=.*//' .env.dev)
@@ -56,3 +56,14 @@ format:
 reset-db:
 	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "DROP DATABASE IF EXISTS $(SQL_DATABASE);"
 	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "CREATE DATABASE $(SQL_DATABASE) OWNER $(SQL_USER);"
+
+
+delete-migrations:
+	@echo "Deleting all migration files..."
+	@find . -path "*/migrations/*.py" -not -name "__init__.py" -exec rm -f {} \;
+	@echo "All migration files deleted."
+
+
+install-req:
+	$(PYTHON) -m pip install -r requirements.txt
+	
