@@ -11,4 +11,5 @@ markdown
 django-filter
 djangorestframework-simplejwt
 pillow
+django-debug-toolbar
 jsonschema
