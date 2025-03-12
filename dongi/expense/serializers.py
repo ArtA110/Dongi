@@ -48,3 +48,16 @@ class PaymentSerializer(serializers.ModelSerializer):
                 if field_name not in allowed_fields:
                     self.fields.pop(field_name)
 
+
+class ExpenseSplitSerializer(serializers.Serializer):
+    split_type = serializers.ChoiceField(choices=['equally', 'percentage', 'custom'])
+    data = serializers.JSONField()
+    
+    def validate(self, data):
+        if data['split_type'] == 'equally':
+            if data['data']:
+                raise serializers.ValidationError("data should be empty for equally split")
+        elif data['split_type'] == 'percentage':
+            if sum(data['data'].values()) != 100:
+                raise serializers.ValidationError("percentages should sum up to 100")
+        return data
