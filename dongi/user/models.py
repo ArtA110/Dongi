@@ -27,3 +27,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 class Group(BaseModel):
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(to=User, related_name="dongi_groups")
+    
+    def __str__(self):
+        return self.name

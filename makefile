@@ -1,4 +1,4 @@
-.PHONY: build up down logs shell migrate createsuperuser test lint format restart reset-db
+.PHONY: build up down logs shell migrate createsuperuser test lint format restart reset-db delete_migrations install-req
 
 include .env.dev
 export $(shell sed 's/=.*//' .env.dev)
@@ -6,6 +6,7 @@ export $(shell sed 's/=.*//' .env.dev)
 DOCKER_COMPOSE = docker compose
 PYTHON = docker compose exec backend python
 EXEC = docker compose exec
+MANAGE = docker compose exec backend python dongi/manage.py 
 
 
 build:
@@ -29,7 +30,7 @@ logs:
 
 
 shell:
-	$(PYTHON) sh
+	$(MANAGE) shell
 
 
 migrate:
@@ -57,7 +58,11 @@ reset-db:
 	$(EXEC) db psql -U $(SQL_USER) -d postgres -c "CREATE DATABASE $(SQL_DATABASE) OWNER $(SQL_USER);"
 
 
-loaddata:
-	$(PYTHON) dongi/manage.py loaddata dongi/user/fixtures/user_fixtures.json
-	$(PYTHON) dongi/manage.py loaddata dongi/notification/fixtures/notification_fixtures.json
-	$(PYTHON) dongi/manage.py loaddata dongi/expense/fixtures/expense_fixtures.json
+delete-migrations:
+	@echo "Deleting all migration files..."
+	@find . -path "*/migrations/*.py" -not -name "__init__.py" -exec rm -f {} \;
+	@echo "All migration files deleted."
+
+
+install-req:
+	$(PYTHON) -m pip install -r requirements.txt
