@@ -67,9 +67,8 @@ class Payment(BaseModel):
     payee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments_received")
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=0)
-    paid_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
-    receipt = models.ImageField(upload_to="receipts/", blank=True, null=True)
+    receipt = models.ImageField(upload_to="dongi/expense/receipts/", blank=True, null=True)
 
     def __str__(self):
         return f"{self.payer} paid {self.payee} - {self.amount}"
