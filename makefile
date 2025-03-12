@@ -66,4 +66,3 @@ delete-migrations:
 
 install-req:
 	$(PYTHON) -m pip install -r requirements.txt
-	

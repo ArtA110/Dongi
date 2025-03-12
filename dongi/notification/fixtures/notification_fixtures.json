@@ -1,0 +1,26 @@
+[
+    {
+        "model": "notification.notification",
+        "pk": "01F7Z5W6E7JX5C5B5F6WQ9V9VY",
+        "fields": {
+            "user": "01F7Z5W6E7JX5C5B5F6WQ9V9VR",
+            "title": "New Payment Received",
+            "message": "You have received a payment of 500 from Jane Doe.",
+            "is_read": false,
+            "created_at": "2025-03-01T10:00:00Z",
+            "updated_at": "2025-03-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "notification.notification",
+        "pk": "01F7Z5W6E7JX5C5B5F6WQ9V9VZ",
+        "fields": {
+            "user": "01F7Z5W6E7JX5C5B5F6WQ9V9VC",
+            "title": "New Group Created",
+            "message": "A new group 'Development Team' has been created.",
+            "is_read": true,
+            "created_at": "2025-03-01T10:00:00Z",
+            "updated_at": "2025-03-01T10:00:00Z"
+        }
+    }
+]
