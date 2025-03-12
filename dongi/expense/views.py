@@ -1,11 +1,17 @@
 from django.db import models
 from expense.models import Expense, ExpenseShare, Payment
-from expense.serializers import ExpenseSerializer, ExpenseShareSerializer, PaymentSerializer, ExpenseSplitSerializer
+from django.contrib.auth import get_user_model
+from expense.serializers import (ExpenseSerializer, ExpenseShareSerializer, 
+                                 PaymentSerializer, ExpenseSplitSerializer,
+                                 ExpenseSharingSerializer)
 from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from expense.utility.algorithms import DFSExpenseShareAlgorithm
+
+User = get_user_model()
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
@@ -89,3 +95,37 @@ class ExpenseSplitView(APIView):
         if set(user_ids) != set(expense_users):
             raise serializers.ValidationError("Invalid user ids")
         return True
+    
+
+class ExpenseShareView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, expense_id):
+        try:
+            expense = Expense.objects.get(id=expense_id)
+        except Expense.DoesNotExist:
+            return Response({"error": "Expense not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        split_data = expense.split_data['users']
+        split_data = {entry['user_id']: entry['amount'] for entry in split_data}
+        payers = list(ExpenseShare.objects.filter(expense=expense).values_list('user', 'amount'))
+        if sum([payer[1] for payer in payers]) != expense.amount:
+            return Response({"error": "Expense Share amounts are not equal to expense"},
+                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        payers = {str(key): value for key, value in payers}
+        
+        user_ids = list(set(payers.keys()).union(split_data.keys()))
+        users = User.objects.filter(id__in=user_ids)
+        user_map = {str(user.id): user for user in users}
+        
+        algorithm = DFSExpenseShareAlgorithm()
+        transactions = algorithm.optimal_transactions(payers, split_data)
+        transactions = [{'debtor': user_map[debtor],
+                         'creditor': user_map[creditor], 
+                         'amount': amount} 
+                        for debtor, creditor, amount in transactions]
+        
+        serializer = ExpenseSharingSerializer(transactions, many=True)
+        return Response(serializer.data)
+    
+    

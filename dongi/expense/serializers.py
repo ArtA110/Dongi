@@ -2,6 +2,7 @@ from rest_framework import serializers
 from expense.models import Expense, ExpenseShare, Payment
 from user.serializers import GroupSerializer, UserSerializer
 
+
 class ExpenseSerializer(serializers.ModelSerializer):
     group = GroupSerializer(context={'limited': True})
     class Meta:
@@ -61,3 +62,9 @@ class ExpenseSplitSerializer(serializers.Serializer):
             if sum(data['data'].values()) != 100:
                 raise serializers.ValidationError("percentages should sum up to 100")
         return data
+    
+    
+class ExpenseSharingSerializer(serializers.Serializer):
+    debtor = UserSerializer(read_only=True, context={'limited': True})
+    creditor = UserSerializer(read_only=True, context={'limited': True})
+    amount = serializers.IntegerField()
