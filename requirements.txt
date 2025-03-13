@@ -17,3 +17,4 @@ redis
 django-redis
 celery
 flower
+locust

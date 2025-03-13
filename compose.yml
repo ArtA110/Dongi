@@ -53,5 +53,15 @@ services:
       - celery
       - redis
 
+  locust:
+    image: locustio/locust
+    volumes:
+      - ./dongi:/mnt
+    command: -f /mnt/locustfile.py --host=http://backend:8000
+    ports:
+      - "8089:8089"
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
