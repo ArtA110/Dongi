@@ -16,3 +16,4 @@ jsonschema
 redis
 django-redis
 celery
+flower

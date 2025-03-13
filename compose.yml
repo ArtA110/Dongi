@@ -40,5 +40,18 @@ services:
       - .env.dev
     user: myuser
 
+  flower:
+    build: ./
+    command: celery -A dongi flower --broker=redis://redis:6379/0
+    volumes:
+      - ./dongi:/app
+    ports:
+      - 5555:5555
+    env_file:
+      - .env.dev
+    depends_on:
+      - celery
+      - redis
+
 volumes:
   postgres_data:
