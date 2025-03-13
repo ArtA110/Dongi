@@ -28,5 +28,17 @@ services:
     ports:
       - "6379:6379"
 
+  celery:
+    build: .
+    command: celery -A dongi worker --loglevel=info
+    volumes:
+      - ./dongi:/app
+    depends_on:
+      - backend
+      - redis
+    env_file:
+      - .env.dev
+    user: myuser
+
 volumes:
   postgres_data:
