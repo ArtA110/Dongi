@@ -10,6 +10,7 @@ services:
       - .env.dev
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:17
@@ -21,6 +22,11 @@ services:
       POSTGRES_USER: ${SQL_USER}
       POSTGRES_PASSWORD: ${SQL_PASSWORD}
       POSTGRES_DB: ${SQL_DATABASE}
+
+  redis:
+    image: redis:7.4.2-alpine
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres_data:

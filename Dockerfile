@@ -19,5 +19,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN chmod +x entrypoint.sh
 
 
-ENTRYPOINT [ "./entrypoint.sh" ]
+# ENTRYPOINT [ "./entrypoint.sh" ] # Disabled due to windows conflict
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
