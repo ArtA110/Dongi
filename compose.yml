@@ -10,6 +10,7 @@ services:
       - .env.dev
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:17
@@ -21,6 +22,46 @@ services:
       POSTGRES_USER: ${SQL_USER}
       POSTGRES_PASSWORD: ${SQL_PASSWORD}
       POSTGRES_DB: ${SQL_DATABASE}
+
+  redis:
+    image: redis:7.4.2-alpine
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    command: celery -A dongi worker --loglevel=info
+    volumes:
+      - ./dongi:/app
+    depends_on:
+      - backend
+      - redis
+    env_file:
+      - .env.dev
+    user: myuser
+
+  flower:
+    build: ./
+    command: celery -A dongi flower --broker=redis://redis:6379/0
+    volumes:
+      - ./dongi:/app
+    ports:
+      - 5555:5555
+    env_file:
+      - .env.dev
+    depends_on:
+      - celery
+      - redis
+
+  locust:
+    image: locustio/locust
+    volumes:
+      - ./dongi:/mnt
+    command: -f /mnt/locustfile.py --host=http://backend:8000
+    ports:
+      - "8089:8089"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

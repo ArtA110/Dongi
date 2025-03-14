@@ -13,3 +13,8 @@ djangorestframework-simplejwt
 pillow
 django-debug-toolbar
 jsonschema
+redis
+django-redis
+celery
+flower
+locust
