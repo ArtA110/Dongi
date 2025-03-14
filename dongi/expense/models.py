@@ -39,7 +39,7 @@ class Expense(BaseModel):
     description = models.TextField(blank=True, null=True)
     split_data = models.JSONField(validators=[JSONSchemaValidator(limit_value=SPLIT_DATA_JSON_SCHEMA)],
                                   blank=True, null=True)
-    factor = models.ImageField(upload_to="factors/", blank=True, null=True)
+    factor = models.ImageField(upload_to="dongi/expense/factors/", blank=True, null=True)
 
     def __str__(self):
         return f"Expense {self.id} - {self.amount}"
