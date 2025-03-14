@@ -30,7 +30,7 @@ logs:
 
 
 shell:
-	$(MANAGE) shell
+	$(MANAGE) shell --interface=ipython
 
 
 migrate:
