@@ -68,6 +68,7 @@ class Payment(BaseModel):
     expense = models.ForeignKey(Expense, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True, null=True)
+    paid_at = models.DateTimeField(auto_now_add=True)
     receipt = models.ImageField(upload_to="dongi/expense/receipts/", blank=True, null=True)
 
     def __str__(self):
