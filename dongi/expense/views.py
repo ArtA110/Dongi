@@ -51,11 +51,11 @@ class ExpenseSplitView(APIView):
 
         if split_type == "equally":
             amount = expense.amount
-            split_data = {"all_users": []}
-            all_users = expense.group.all_users.values_list("id", flat=True)
-            share = amount / len(all_users)
-            for user in all_users:
-                split_data["all_users"].append({"user_id": str(user), "amount": share})
+            split_data = {"users": []}
+            users = expense.group.users.values_list("id", flat=True)
+            share = amount / len(users)
+            for user in users:
+                split_data["users"].append({"user_id": str(user), "amount": share})
             expense.split_data = split_data
             expense.save()
         elif self._check_user_existance(data, expense):
@@ -78,9 +78,9 @@ class ExpenseSplitView(APIView):
     def _handle_percentage_split(self, data, expense):
         if self._check_total_amount(data, expense):
             amount = expense.amount
-            split_data = {"all_users": []}
+            split_data = {"users": []}
             for user_id, amount_p in data.items():
-                split_data["all_users"].append(
+                split_data["users"].append(
                     {"user_id": user_id, "amount": amount * (amount_p / 100)}
                 )
             expense.split_data = split_data
@@ -88,9 +88,9 @@ class ExpenseSplitView(APIView):
 
     def _handle_custom_split(self, data, expense):
         if self._check_total_amount(data, expense, caller="custom_split"):
-            split_data = {"all_users": []}
+            split_data = {"users": []}
             for user_id, amount in data.items():
-                split_data["all_users"].append({"user_id": user_id, "amount": amount})
+                split_data["users"].append({"user_id": user_id, "amount": amount})
             expense.split_data = split_data
             expense.save()
 
@@ -112,11 +112,12 @@ class ExpenseSplitView(APIView):
 
     def _check_user_existance(self, data, expense):
         user_ids = list(data.keys())
-        expense_all_users = list(expense.group.all_users.values_list("id", flat=True))
-        expense_all_users = [str(user_id) for user_id in expense_all_users]
-        if set(user_ids) != set(expense_all_users):
+        expense_users = list(expense.group.users.values_list("id", flat=True))
+        expense_users = [str(user_id) for user_id in expense_users]
+        if set(user_ids) != set(expense_users):
             raise serializers.ValidationError("Invalid user ids")
         return True
+
 
 class ExpenseShareView(APIView):
     permission_classes = [AllowAny]
@@ -124,22 +125,33 @@ class ExpenseShareView(APIView):
     def get(self, request, expense_id):
         expense = self._fetch_expense(expense_id)
         if not expense:
-            return Response({"error": "Expense not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Expense not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         split_data = expense.split_data["users"]
         expense_shares = self._fetch_shares(expense)
         if not expense_shares:
-            return Response({"error": "Expense not found"}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            return Response(
+                {"error": "Expense not found"},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
 
         payment_data = self._process_payments(expense)
-        owes, final_payments = self._calculate_shares(expense_shares, split_data, payment_data)
+        owes, final_payments = self._calculate_shares(
+            expense_shares, split_data, payment_data
+        )
 
         transactions = self._get_transactions(final_payments, owes)
         all_user_ids = list(set(list(owes.keys()) + list(final_payments.keys())))
         user_map = self._map_users(all_user_ids)
 
         response_data = [
-            {"debtor": user_map[debtor], "creditor": user_map[creditor], "amount": amount}
+            {
+                "debtor": user_map[debtor],
+                "creditor": user_map[creditor],
+                "amount": amount,
+            }
             for debtor, creditor, amount in transactions
         ]
 
@@ -170,7 +182,8 @@ class ExpenseShareView(APIView):
     def _calculate_shares(self, expense_shares, split_data, payment_data):
         owes = {i["user_id"]: i["amount"] for i in split_data}
         final_payments = {
-            i["user_id"]: expense_shares.get(user=i["user_id"]).amount + payment_data.get(i["user_id"], 0)
+            i["user_id"]: expense_shares.get(user=i["user_id"]).amount
+            + payment_data.get(i["user_id"], 0)
             for i in split_data
         }
         return owes, final_payments
