@@ -22,4 +22,5 @@ RUN chmod +x entrypoint.sh
 USER myuser
 
 # ENTRYPOINT [ "./entrypoint.sh" ] # Disabled due to windows conflict
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "dongi.dongi.wsgi:application", "--bind", "0.0.0.0:8000"]
