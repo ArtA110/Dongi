@@ -2,7 +2,7 @@ from django.db import models
 from core.models import BaseModel
 from user.models import Group
 from django.contrib.auth import get_user_model
-from .validators.field_validators import JSONSchemaValidator, validate_split_data
+from core.validators.field_validators import JSONSchemaValidator, validate_split_data
 
 User = get_user_model()
 
