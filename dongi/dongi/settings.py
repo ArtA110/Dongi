@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,6 +98,14 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_TASK_TRACK_STARTED = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+CELERY_BEAT_SCHEDULE = {
+    "sample_task": {
+        "task": "core.tasks.test_task",
+        "schedule": crontab(minute="*/1"),
+    },
+}
+
 
 CACHES = {
     'default': {
