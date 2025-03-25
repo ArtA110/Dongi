@@ -18,15 +18,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
+from allauth.socialaccount.providers.google.views import oauth2_login, oauth2_callback
+from allauth.account.views import logout
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
+    path('accounts/google/login/', oauth2_login, name='google_login'),
+    path('accounts/google/login/callback/', oauth2_callback, name='google_callback'),
+    path('accounts/logout/', logout, name='google_logout'),
+    path('schema/file', SpectacularAPIView.as_view(), name='schema'),
+    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path(
         "api/v1/",
         include(
