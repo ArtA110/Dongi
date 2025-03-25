@@ -18,4 +18,5 @@ django-redis
 celery
 flower
 locust
+drf-spectacular[sidecar]
 ipython
