@@ -20,4 +20,6 @@ flower
 locust
 django-allauth 
 social-auth-app-django
-dj-rest-auth==2.2.8
+drf-spectacular[sidecar]
+ipython
+
