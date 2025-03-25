@@ -4,11 +4,15 @@ from django.core.exceptions import ValidationError
 
 
 class JSONSchemaValidator(BaseValidator):
-    def compare(self, value, schema):
+    def __init__(self, limit_value=None):
+        super().__init__(limit_value)
+    
+    def compare(self, value, schema=None):
+        schema = schema or self.schema
         try:
             jsonschema.validate(value, schema)
-        except jsonschema.ValidationError:
-            raise ValidationError(f"Value {value} does not match schema")
+        except jsonschema.ValidationError as e:
+            raise ValidationError(f"Value {value} does not match schema: {e.message}")
         
         
 def validate_split_data(split_data, amount):

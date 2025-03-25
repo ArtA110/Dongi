@@ -19,3 +19,4 @@ celery
 flower
 locust
 drf-spectacular[sidecar]
+ipython
