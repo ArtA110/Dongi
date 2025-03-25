@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+
+from rest_framework import permissions, viewsets
 from .models import Notification
 from .serializers import NotificationSerializer
 from rest_framework.views import APIView
@@ -10,8 +11,17 @@ from rest_framework.permissions import AllowAny
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = Notification.objects.select_related('user')
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    queryset = Notification.objects.select_related("user")
     serializer_class = NotificationSerializer
+
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return self.queryset.filter(user=self.request.user)
 
 
 class SendEmailView(APIView):
@@ -33,3 +43,4 @@ class SendEmailView(APIView):
             return Response({'status': 'Emails sent successfully'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
