@@ -11,6 +11,10 @@ env/
 venv/
 .env/
 
+.env
+.env.dev
+
+
 *.log
 local_settings.py
 db.sqlite3
@@ -24,3 +28,5 @@ tests/screenshots/
 
 .idea/
 .vscode/
+celerybeat-schedule
+celerybeat-schedule.db

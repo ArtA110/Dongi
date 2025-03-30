@@ -1,36 +1,62 @@
-from django.db import models
-from expense.models import Expense, ExpenseShare, Payment
 from django.contrib.auth import get_user_model
+from django.db import models
+from rest_framework import serializers, status, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from expense.models import Expense, ExpenseShare, Payment
 from expense.serializers import (
     ExpenseSerializer,
     ExpenseShareSerializer,
-    PaymentSerializer,
-    ExpenseSplitSerializer,
     ExpenseSharingSerializer,
+    ExpenseSplitSerializer,
+    PaymentSerializer,
 )
-from rest_framework import viewsets, serializers
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny
 from expense.utility.algorithms import DFSExpenseShareAlgorithm
 
 User = get_user_model()
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        IsAuthenticated,
+    ]
     serializer_class = ExpenseSerializer
     queryset = Expense.objects.select_related("group")
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return self.queryset.filter(group__users=self.request.user)
 
 
 class ExpenseShareViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseShareSerializer
     queryset = ExpenseShare.objects.select_related("expense", "user")
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return self.queryset.filter(users=self.request.user)
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.select_related("payer", "payee")
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+        return self.queryset.filter(
+            models.Q(payer=self.request.user) | models.Q(payee=self.request.user)
+        )
 
 
 class ExpenseSplitView(APIView):
@@ -120,7 +146,18 @@ class ExpenseSplitView(APIView):
 
 
 class ExpenseShareView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return ExpenseShare.objects.all()
+
+        return ExpenseShare.objects.filter(
+            models.Q(user=self.request.user)
+            | models.Q(expense__group__users=self.request.user)
+        )
 
     def get(self, request, expense_id):
         expense = self._fetch_expense(expense_id)
@@ -158,14 +195,17 @@ class ExpenseShareView(APIView):
         serializer = ExpenseSharingSerializer(response_data, many=True)
         return Response(serializer.data)
 
+    def _get_expense_queryset(self):
+        return Expense.objects.filter(group__users=self.request.user)
+
     def _fetch_expense(self, expense_id):
         try:
-            return Expense.objects.get(id=expense_id)
+            return self._get_expense_queryset().get(id=expense_id)
         except Expense.DoesNotExist:
             return None
 
     def _fetch_shares(self, expense):
-        return ExpenseShare.objects.filter(expense=expense)
+        return self.get_queryset().get(expense=expense)
 
     def _process_payments(self, expense):
         payments = Payment.objects.filter(expense=expense)

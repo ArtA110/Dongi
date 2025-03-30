@@ -1,14 +1,15 @@
-from django_ulid.models import ULIDField
-from django_ulid.models import default as default_ulid
 from django.db import models
 from django.utils import timezone
+from django_ulid.models import ULIDField
+from django_ulid.models import default as default_ulid
 
 
 def new_ulid():
-    return str(default_ulid()) # Keeping this for migration consistency
+    return str(default_ulid())  # Keeping this for migration consistency
+
 
 class BaseModel(models.Model):
-    id = ULIDField(default=new_ulid ,primary_key=True, editable=False)
+    id = ULIDField(default=new_ulid, primary_key=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)

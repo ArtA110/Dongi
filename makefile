@@ -24,13 +24,12 @@ down:
 restart:
 	$(DOCKER_COMPOSE) down && $(DOCKER_COMPOSE) up -d
 
-
 logs:
 	$(DOCKER_COMPOSE) logs -f
 
 
 shell:
-	$(MANAGE) shell
+	$(MANAGE) shell --interface=ipython
 
 
 migrate:
