@@ -18,8 +18,8 @@ django-redis
 celery
 flower
 locust
+gunicorn
 django-allauth 
 social-auth-app-django
 drf-spectacular[sidecar]
 ipython
-
