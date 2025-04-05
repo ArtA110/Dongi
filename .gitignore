@@ -28,5 +28,4 @@ tests/screenshots/
 
 .idea/
 .vscode/
-celerybeat-schedule
-celerybeat-schedule.db
+celerybeat-schedule*
