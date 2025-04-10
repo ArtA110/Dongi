@@ -3,14 +3,21 @@ from .models import Notification
 from user.serializers import UserSerializer
 from django.core.exceptions import ValidationError
 from core.validators.field_validators import JSONSchemaValidator
+from user.models import User
 
 
 class NotificationSerializer(serializers.ModelSerializer):
-    user = UserSerializer(context={'limited': True})
+    user = UserSerializer(context={'limited': True}, read_only=True)
+    user_ids = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        write_only=True,
+        source='user'
+    )
 
     class Meta:
         model = Notification
         fields = "__all__"
+        read_only_fields = ['id', 'created_at', 'updated_at', 'deleted_at']
         
 class SendEmailSerializer(serializers.Serializer):
     subject = serializers.CharField(required=True)
