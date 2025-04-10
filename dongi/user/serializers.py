@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
+        read_only_fields = ['id', 'deleted_at', 'groups', 'user_permissions', 'last_login', 'is_superuser']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
