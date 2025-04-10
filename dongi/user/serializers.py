@@ -33,17 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         representation.pop('password', None)
         return representation
     
-    def create(self, validated_data):
-        user = super().create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
     
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-        if password:
-            instance.set_password(password)
-        return super().update(instance, validated_data)
 
 
 class GroupSerializer(serializers.ModelSerializer):
