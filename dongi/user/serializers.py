@@ -4,10 +4,20 @@ from core.serializers import PKRF
 
 
 class UserSerializer(serializers.ModelSerializer):
+    
+    dongi_groups = serializers.StringRelatedField(many=True, read_only=True)
+    
+    dongi_group_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(),
+        many=True,
+        write_only=True,
+        source='dongi_groups'
+    )
 
     class Meta:
         model = User
-        exclude = ['password']
+        fields = "__all__"
+        read_only_fields = ['id', 'deleted_at', 'groups', 'user_permissions', 'last_login', 'is_superuser']
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -17,14 +27,22 @@ class UserSerializer(serializers.ModelSerializer):
             for field_name in list(self.fields.keys()):
                 if field_name not in allowed_fields:
                     self.fields.pop(field_name)
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation.pop('password', None)
+        return representation
+    
+    
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True, context={'limited': True})
+    users = UserSerializer(many=True, context={'limited': True}, read_only=True)
 
     class Meta:
         model = Group
         fields = "__all__"
+        read_only_fields = ['id', 'deleted_at']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,5 +52,6 @@ class GroupSerializer(serializers.ModelSerializer):
             for field_name in list(self.fields.keys()):
                 if field_name not in allowed_fields:
                     self.fields.pop(field_name)
+    
     
         
