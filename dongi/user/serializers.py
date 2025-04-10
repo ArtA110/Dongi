@@ -4,6 +4,15 @@ from core.serializers import PKRF
 
 
 class UserSerializer(serializers.ModelSerializer):
+    
+    dongi_groups = serializers.StringRelatedField(many=True, read_only=True)
+    
+    dongi_group_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(),
+        many=True,
+        write_only=True,
+        source='dongi_groups'
+    )
 
     class Meta:
         model = User
@@ -37,11 +46,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True, context={'limited': True})
+    users = UserSerializer(many=True, context={'limited': True}, read_only=True)
 
     class Meta:
         model = Group
         fields = "__all__"
+        read_only_fields = ['id', 'deleted_at']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,5 +61,6 @@ class GroupSerializer(serializers.ModelSerializer):
             for field_name in list(self.fields.keys()):
                 if field_name not in allowed_fields:
                     self.fields.pop(field_name)
+    
     
         
